@@ -10,7 +10,7 @@ This guide describes how to compile openMHA from sources for developers.
 
 ### Prerequisites
 64-bit version of Ubuntu 18.04 or later,
-or a Beaglebone Black running Debian Stretch.
+or a Beaglebone Black running Debian Buster.
 
 ... with the following software packages installed:
 - g++
@@ -23,11 +23,11 @@ or a Beaglebone Black running Debian Stretch.
   - GNU Octave with the signal package and default-jre
   - liblo-dev
   - liblsl
+  - libeigen3-dev
 
-Octave and default-jre are not essential for building or running openMHA.
-The build process uses Octave + Java to run some tests after
-building openMHA.  If Octave is not available, this test will fail,
-but the produced openMHA will still work.
+The optional libraries are needed to compile the openMHA plugins
+ac2lsl, ac2osc, osc2ac, and rohBeam.  When these libraries are not available,
+then openMHA will be compiled without these plugins.
 
 ### Compilation
 
@@ -89,9 +89,14 @@ The following packages should be installed via MacPorts:
   - octave-signal
   - liblo
   - liblsl
+  - eigen3
 
 The optional GUI (cf. openMHA_gui_manual.pdf) requires Java-enabled
 Octave in version >= 4.2.1.
+
+The optional libraries are needed to compile the openMHA plugins
+ac2lsl, ac2osc, osc2ac, and rohBeam.  When these libraries are not available,
+then openMHA will be compiled without these plugins.
 
 ### Compilation
 
@@ -113,10 +118,10 @@ make install
 You can set the make variable PREFIX to point to the desired installation
 location.  The default installation location is ".", the current directory.
 
-You should then add the openMHA installation directory to the system search path
-for libraries:
+You should then add the openMHA library installation directory to the openMHA search
+path for libraries:
 ```
-export DYLD_LIBRARY_PATH=<YOUR-MHA-DIRECTORY>/lib:$DYLD_LIBRARY_PATH
+export MHA_LIBRARY_PATH=<YOUR-MHA-DIRECTORY>/lib
 ```
 as well as to the search path for executables:
 ```
@@ -140,24 +145,25 @@ loaded.
 
 ### Prerequisites
 
-- msys2 installation with MinGW64 C++ compiler
-- Jack Audio Connection Kit (Use the 64-bit installer for windows) (http://jackaudio.org)
+- Get **msys2 installer** directly from the msys2 homepage https://www.msys2.org/ 
+ - Installer required for 64-bit Windows would be named as msys2-x86_64-*releasedate*.exe. *Release date is in the format of yyyymmdd*
+- Get Jack Audio Connection Kit from http://jackaudio.org (Use the 64-bit installer for windows)
+- Execute both installers
 
 ### Preparation
-
-- With the msys2 package manager pacman, install the following packages:
-mingw-w64-x86_64-libsndfile, mingw-w64-x86_64-portaudio, and git.
-- Copy the contents of the includes folder in the JACK directory into your mingw
-include directory (default is c:\msys64\mingw64\include).  There should now be a
-directory c:\msys64\mingw64\include\jack containing some files.
-- Copy libjack64.lib from the JACK installation to the lib directory of your mingw64
-directory and rename it to libjack.a afterwards.  Windows may warn that the
-file may become unusable -- ignore this warning.
+- Run **MSYS2 MinGW 64-bit** from start menu (if it didn't open automatically after finishing installation). In the terminal, update base package using: `pacman -Syu`
+- Close terminal when prompted
+- Restart **MSYS2 MinGW 64-bit** terminal from start menu (again) and type:`pacman -Su`
+- Install openMHA build dependencies:
+`pacman -S msys/git mingw64/mingw-w64-x86_64-gcc msys/make tar mingw64/mingw-w64-x86_64-boost openbsd-netcat mingw-w64-x86_64-libsndfile mingw-w64-x86_64-portaudio mingw64/mingw-w64-x86_64-nsis mingw-w64-x86_64-eigen3`
+- Copy the contents of the includes folder in the JACK directory **(C:\Program Files (x86)\Jack\includes)** into your mingw include directory (default is **C:\msys64\mingw64\include**). There should now be a directory **(C:\msys64\mingw64\include\jack)** containing some files.
+- Copy **libjack64.lib** from the JACK installation **(C:\Program Files (x86)\Jack\lib)** to the lib sub-directory of your mingw64
+directory and rename it to **libjack.a** afterwards. Windows may warn that the file may become unusable -- ignore this warning.
 
 ### Compilation
 
-Start a mingw64 bash shell from the Windows start menu.
-Clone openMHA from github, compile openMHA by typing in a terminal
+Start a MinGW-64 bash shell from the Windows start menu.
+Clone openMHA from github and compile openMHA by typing in the terminal:
 ```
 git clone https://github.com/HoerTech-gGmbH/openMHA
 cd openMHA
@@ -165,15 +171,11 @@ cd openMHA
 ```
 
 The compilation may take a while.
-You then need to copy the openMHA libraries into the openMHA bin directory:
-```
-mv lib/* bin/
-```
 
-To start openMHA, you need to start a MinGW64 bash shell and navigate to the
+To start openMHA, you need to start a MinGW-64 bash shell and navigate to the
 openMHA/bin directory, then type ./mha.exe.
 
-## IV. Regeneration of the documentation:
+## IV. Regeneration of the documentation on Linux:
 
 User manuals for different levels of usability in PDF format are
 provided with this release.  These files can also be re-generated by

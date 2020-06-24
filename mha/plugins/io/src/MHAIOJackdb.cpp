@@ -1,5 +1,5 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
-// Copyright © 2008 2012 2013 2014 2015 2018 HörTech gGmbH
+// Copyright © 2008 2012 2013 2014 2015 2018 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -226,7 +226,7 @@ void io_jack_t::prepare(int nch_in,int nch_out)
         if( fragsize_ratio*mha_fragsize != (unsigned int)server_fragsize.data)
             throw MHA_Error(__FILE__,__LINE__,
                             "Mismatching buffer size:\n"
-                            "JACK has %d (expected %d), MHA needs %d.",
+                            "JACK has %u (expected %u), MHA needs %u.",
                             get_fragsize(), fragsize_ratio*mha_fragsize, mha_fragsize );
         pwinner_out = new MHASignal::waveform_t(fragsize_ratio*mha_fragsize,nch_out);
         reconnect_inports();

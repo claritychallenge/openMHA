@@ -1,5 +1,5 @@
 # This file is part of the HörTech Open Master Hearing Aid (openMHA)
-# Copyright © 2014 2015 2016 2017 2018 HörTech gGmbH
+# Copyright © 2014 2015 2016 2017 2018 2019 2020 HörTech gGmbH
 #
 # openMHA is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -89,6 +89,16 @@ dummy_lsl:
 endif
 endif
 
+ifeq "$(NEEDS_EIGEN)" "yes"
+ifneq "$(WITH_EIGEN)" "yes"
+# this plugin needs eigen3.
+# Do not compile if eigen3 not available.
+# instead, execute this dummy rule. as default target
+dummy_eigen:
+	@echo "not compiling" $(PLUGINS) "since eigen3 is not available"
+endif
+endif
+
 ifeq "$(NEEDS_OSC)" "yes"
 ifneq "$(WITH_OSC)" "yes"
 # this plugin needs osc.
@@ -109,13 +119,13 @@ dummy_libserial:
 endif
 endif
 
-ifeq "$(NEEDS_CXX14)" "yes"
-ifeq "$(CXXSTANDARD)" "c++11"
-# this plugin needs at least c++14.
-# Do not compile if c++14 not available.
+ifeq "$(NEEDS_CXX17)" "yes"
+ifeq ($(CXXSTANDARD),$(findstring $(CXXSTANDARD),"gnu++98c++98gnu++03c++03gnu++0xc++0xgnu++11c++11gnu++1yc++1ygnu++14c++14"))
+# this plugin needs at least c++17.
+# Do not compile if c++17 not available.
 # instead, execute this dummy rule. as default target
-dummy_cxx14:
-	@echo "not compiling" $(PLUGINS) "since c++14 standard not available"
+dummy_cxx17:
+	@echo "not compiling" $(PLUGINS) "since c++17 standard not available"
 endif
 endif
 
@@ -163,6 +173,15 @@ CXXFLAGS += -I../../libmha/src
 CFLAGS += -I../../libmha/src
 LDFLAGS += -L../../libmha/$(BUILD_DIR)
 LDLIBS += -l$(MHATOOLBOX_NAME)
+
+# Library-dependent plugin artifact rule specific modifications of compiler
+# and linker flags need to have their own if statements because they must
+# come after the include ../../../rules.mk block and the dummy targets must come
+# before it.
+
+ifeq "$(NEEDS_LSL)" "yes"
+$(PLUGIN_AND_TEST_ARTIFACTS): LDLIBS += -llsl
+endif
 
 
 # Local Variables:

@@ -1,5 +1,5 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
-// Copyright © 2007 2009 2010 2013 2014 2015 2018 2019 HörTech gGmbH
+// Copyright © 2007 2009 2010 2013 2014 2015 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -168,7 +168,7 @@ namespace mconv {
         if (irs.data.size() != inch.data.size()
             || irs.data.size() != outch.data.size())
             throw MHA_Error(__FILE__, __LINE__,
-                            "Sizes of irs (%d), inch (%d), and outch (%d) do not match",
+                            "Sizes of irs (%zu), inch (%zu), and outch (%zu) do not match",
                             irs.data.size(), inch.data.size(), outch.data.size());
 
         MHAFilter::transfer_function_t tf;
@@ -205,11 +205,6 @@ MHAPLUGIN_DOCUMENTATION(mconv,
                         " is applied with the appropriate delay. Each partition is applied using the"
                         "overlap-save method. The FFT length used is 2*fragsize."
                         "For efficiency reasons, fragsize should be a power of two.\n\n"
-                        " Partitioned convolution is used to reduce the"
-                        " overall algorithmic delay of the convolution with a long impulse response."
-                        " The overall computational cost of using partitioned convolution is higher"
-                        " when compared to convolving the complete impulse response in a single overlap-save"
-                        " operation, because longer FFTs are more efficient.\n\n"
                         " This implementation discards impulse response partitions where the coefficients are all zero."
                         )
 

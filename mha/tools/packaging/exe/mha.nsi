@@ -14,7 +14,7 @@
 ; version 3 along with openMHA.  If not, see <http://www.gnu.org/licenses/>.
 
 !define PRODUCT_NAME openMHA 
-!define PRODUCT_VERSION 4.11.0
+!define PRODUCT_VERSION 4.12.0
 !define PRODUCT_PUBLISHER HoerTech
 BrandingText "${PRODUCT_NAME} (c) ${PRODUCT_PUBLISHER}"
 RequestExecutionLevel admin
@@ -71,6 +71,12 @@ SectionEnd
 Section "Examples"
   SetOutPath $INSTDIR\examples
   File /r examples\*
+SectionEnd
+
+; Reference algorithms
+Section "Reference algorithms"
+  SetOutPath $INSTDIR\reference_algorithms
+  File /r reference_algorithms\*
 SectionEnd
 
 ; Manuals

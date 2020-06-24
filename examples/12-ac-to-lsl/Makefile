@@ -12,8 +12,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License,
 # version 3 along with openMHA.  If not, see <http://www.gnu.org/licenses/>.
+include ../../config.mk
 receive_lsl: receive_lsl.cpp
-	$(CXX) receive_lsl.cpp -std=c++14 -g -o receive_lsl -llsl
+	$(CXX) receive_lsl.cpp -std=$(CXXSTANDARD) -g -o receive_lsl -llsl
 # Local Variables:
 # compile-command: "make"
 # End:

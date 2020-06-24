@@ -1,5 +1,5 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
-// Copyright © 2018 2019 HörTech gGmbH
+// Copyright © 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ def openmha_build_steps(stage_name) {
   def linux = (system != "windows" && system != "mac")
   def windows = (system == "windows")
   def mac = (system == "mac")
-  def docs = (devenv == "mhadoc")
+  def docs = (devenv == "mhadoc") //Create PDFs only on 1 of the parallel builds
 
   // Compilation on ARM is the slowest, assign 5 CPU cores to each ARM build job
   def cpus = (arch == "armv7") ? 5 : 2 // default on other systems is 2 cores
@@ -74,30 +74,62 @@ def openmha_build_steps(stage_name) {
   bash "./configure"
 
   if (docs) {
+    // Create the cross-platform artifacts (PDFs and debs).
+
+    // All other platforms have to wait for the documents to be created and
+    // published here, therefore we give this task additional cpus to create
+    // the docs.
     bash ("make -j ${cpus + additional_cpus_for_docs} doc")
 
     // Store generated PDF documents as Jenkins artifacts
     stash name: "docs", includes: '*.pdf'
     bash ("echo stashed docs on $system $arch at \$(date -R)")
     archiveArtifacts 'pdf-*.zip'
+
+    // The docker slave that builds the docs also builds the architecture
+    // independent debian packages.  Again, all linux build jobs have to
+    // wait for these debs created here, hence the additional cpus again.
+    bash ("make -j ${cpus + additional_cpus_for_docs} deb")
+
+    // make deb leaves copies of the platform-independent debs in base directory
+    stash name: "debs", includes: '*.deb'
+    bash ("echo stashed debs on $system $arch at \$(date -R)")
+    archiveArtifacts '*.deb'
+
+    // Doxygen generates html version of developer documentation.  Publish.
+    archiveArtifacts 'mha/doc/mhadoc/html/**'
   }
 
   // Build executables, plugins, execute tests
   bash ("make -j $cpus test")
 
   // Retrieve the documents, wait if they are not ready yet
-  def wait_time = 1
+  def wait_time = 1 // short sleep time for first iteration
   def attempt = 0
   retry(45){
     sleep(wait_time)
-    wait_time = 15
+    wait_time = 15 // longer sleep times for subsequent iterations
     attempt = attempt + 1
     bash ("echo unstash docs attempt $attempt on $system $arch at \$(date -R)")
     unstash "docs"
   }
 
   if (linux) {
-    bash ("make -j $cpus deb")
+    if (!docs) { // The docs builder already has the debs.  Built them above.
+      // Retrieve the architecture-independent debs, wait until they are ready.
+      wait_time = 1
+      attempt = 0
+      retry(45){
+        sleep(wait_time)
+        wait_time = 15
+        attempt = attempt + 1
+        bash ("echo unstash debs attempt $attempt on $system $arch at \$(date -R)")
+        unstash "debs"
+        bash ("touch *.deb")
+      }
+
+      bash ("make -j $cpus deb")
+    }
     // Store debian packages
     stash name: (arch+"_"+system), includes: 'mha/tools/packaging/deb/hoertech/'
     archiveArtifacts 'mha/tools/packaging/deb/hoertech/*/*.deb'
@@ -114,6 +146,17 @@ def openmha_build_steps(stage_name) {
     // Store mac installer
     archiveArtifacts 'mha/tools/packaging/pkg/*.pkg'
   }
+
+  // Check reproducibility: No package should contain "modified" in its name
+  bash ('if find mha/tools/packaging | grep modified;' +
+        'then echo error: Some installation packages have \"modified\" as part'+
+        '          of their file name, which means that some git-controlled' +
+        '          files contained modifications when these installation' +
+        '          packages were created.  This should not happen because the' +
+        '          resulting installer packages are not reproducible.  Find' +
+        '          the cause and fix the error.;' +
+        '     exit 1;' +
+        'fi')
 }
 
 pipeline {
@@ -125,25 +168,17 @@ pipeline {
                     agent {label               "bionic && x86_64 && mhadoc"}
                     steps {openmha_build_steps("bionic && x86_64 && mhadoc")}
                 }
+                stage(                         "focal && x86_64 && mhadev") {
+                    agent {label               "focal && x86_64 && mhadev"}
+                    steps {openmha_build_steps("focal && x86_64 && mhadev")}
+                }
                 stage(                         "xenial && x86_64 && mhadev") {
                     agent {label               "xenial && x86_64 && mhadev"}
                     steps {openmha_build_steps("xenial && x86_64 && mhadev")}
                 }
-                stage(                         "bionic && i686 && mhadev") {
-                    agent {label               "bionic && i686 && mhadev"}
-                    steps {openmha_build_steps("bionic && i686 && mhadev")}
-                }
-                stage(                         "xenial && i686 && mhadev") {
-                    agent {label               "xenial && i686 && mhadev"}
-                    steps {openmha_build_steps("xenial && i686 && mhadev")}
-                }
                 stage(                         "bionic && armv7 && mhadev") {
                     agent {label               "bionic && armv7 && mhadev"}
                     steps {openmha_build_steps("bionic && armv7 && mhadev")}
-                }
-                stage(                         "xenial && armv7 && mhadev") {
-                    agent {label               "xenial && armv7 && mhadev"}
-                    steps {openmha_build_steps("xenial && armv7 && mhadev")}
                 }
                 stage(                         "windows && x86_64 && mhadev") {
                     agent {label               "windows && x86_64 && mhadev"}
@@ -162,17 +197,37 @@ pipeline {
             steps {
                 // receive all deb packages from openmha build
                 unstash "x86_64_bionic"
+                unstash "x86_64_focal"
                 unstash "x86_64_xenial"
                 unstash "armv7_bionic"
-                unstash "armv7_xenial"
-                unstash "i686_bionic"
-                unstash "i686_xenial"
 
                 // Copies the new debs to the stash of existing debs,
                 sh "make storage"
                 build job:         "/hoertech-aptly/$BRANCH_NAME",
                       quietPeriod: 300,
                       wait:        false
+            }
+        }
+        stage("push updates in development branch to github when build successful") {
+
+            // This stage is only executed if all prevous stages were successful
+            when { branch 'development' } // and only for branch development
+
+            steps {
+                // Make sure we have a git checkout
+                checkout scm
+
+                // Make sure branch development is not shallow in this clone
+                sh "git fetch --unshallow || true"
+
+                // Generate some status output
+                sh "git status && git remote -v && git branch -a"
+
+                // We are in detached head mode. Create a temporary branch here
+                sh "git switch --force-create temporary-branch-name-for-jenkins"
+
+                // push this state here to branch development to github
+                sh "git push git@github.com:HoerTech-gGmbH/openMHA.git temporary-branch-name-for-jenkins:development"
             }
         }
     }

@@ -1,5 +1,5 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
-// Copyright © 2017 2018 HörTech gGmbH
+// Copyright © 2017 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -62,7 +62,7 @@ prediction_error_config::prediction_error_config(algo_comm_t &ac, const mhaconfi
     if( (pred_err->gains.data.size() != channels) && (pred_err->gains.data.size() != 1) )
         throw MHA_Error(__FILE__,__LINE__,
                         "The number of entries in the gain vector must be"
-                        " either %d (one per channel) or 1 (same gains for all channels)", channels);
+                        " either %u (one per channel) or 1 (same gains for all channels)", channels);
 
     if( pred_err->gains.data.size() == 1 ){
 
@@ -128,8 +128,8 @@ mha_wave_t *prediction_error_config::process(mha_wave_t *s_Y, mha_real_t rho, mh
 
     if ( s_LPC.num_channels != channels )
         {
-            throw MHA_Error(__FILE__,__LINE__,"The number of input channels %d doesn't match"
-                            " the number of channels %d in name_d:%s",
+            throw MHA_Error(__FILE__,__LINE__,"The number of input channels %u doesn't match"
+                            " the number of channels %u in name_d:%s",
                             channels, s_LPC.num_channels, name_lpc_.c_str());
         }
 
@@ -168,13 +168,17 @@ mha_wave_t *prediction_error_config::process(mha_wave_t *s_Y, mha_real_t rho, mh
         // Forward path
         for(ch = 0; ch < channels; ch++) {
 
-            // Remove the oldest sample of the delayed prewhitened output buffer from the power computation
-            // and from the prewhitened error
+            // Compute the power of the prewhitened output buffer without the oldest sample
             // The buffer will be shifted and this sample will be removed from the buffer to make place for the new sample
-            Pu[ch] -= UbufferPrew.value(0, ch) * UbufferPrew.value(0, ch); // index = 0 corresponds to the oldest sample
-
+            Pu[ch] = 0;
+            for(unsigned int i = 1; i < ntaps; i++) {
+                PSD_val = UbufferPrew.value(i, ch) * UbufferPrew.value( i, ch); // index = 0 corresponds to the oldest sample
+       
+            Pu[ch] += PSD_val;
+            }
+       
             // Compute the a priori prediction error
-            s_E.value(kf,ch) = value(s_Y, kf, ch) - F_Uflt.value(0, ch);
+            s_E.value(kf, ch) = value(s_Y, kf, ch) - F_Uflt.value(0, ch);
             smpl.buf[ch] = s_E.value(kf,ch);
         }
 
@@ -194,7 +198,6 @@ mha_wave_t *prediction_error_config::process(mha_wave_t *s_Y, mha_real_t rho, mh
         // Add the current output sample into the buffer for computing the a priori prediction error
         s_Wflt.write(*s_Usmpl);
 
-
         // Backward Path
         for(ch = 0; ch < channels; ch++) {
             // Prewhitening the delayed input and output signals using LPC
@@ -207,8 +210,8 @@ mha_wave_t *prediction_error_config::process(mha_wave_t *s_Y, mha_real_t rho, mh
             }
 
             // Updating the power of the prewhitened output signal
-            Pu[ch] += value(UPrew, 0, ch) * value(UPrew, 0, ch);
-
+            PSD_val = value(UPrew, 0, ch) * value(UPrew, 0, ch);
+            Pu[ch] += PSD_val;
 
             // Updating the prewhitened filtered output signal
             // by filtering the delayed prewhitened output signal with the last estimate of the feedback path
@@ -220,15 +223,13 @@ mha_wave_t *prediction_error_config::process(mha_wave_t *s_Y, mha_real_t rho, mh
 
             // Computing the prewhitened error signal
             value(EPrew, 0, ch) = value(YPrew, 0, ch) - value(UPrewW, 0, ch);
-
-
+             
             // err = rho * EPrew
             err = rho * value(EPrew, 0, ch);
 
             // err = err / (UbufferPrew' * uBufferPrew + epsilon)
             err /= (Pu[ch] + c);
-
-
+            
             // Initialize the filtered output signal to 0
             F_Uflt.value(0, ch) = 0;
 
@@ -326,12 +327,12 @@ void prediction_error::prepare(mhaconfig_t & signal_info)
     //good idea: restrict input type and dimension
     if (!signal_info.channels)
         throw MHA_Error(__FILE__, __LINE__,
-                        "This plugin must have at least one input channel: (%d found)\n"
+                        "This plugin must have at least one input channel: (%u found)\n"
                         , signal_info.channels);
 
     if (!signal_info.fragsize)
         throw MHA_Error(__FILE__, __LINE__,
-                        "Fragment size should be at least one: (%d found)\n"
+                        "Fragment size should be at least one: (%u found)\n"
                         , signal_info.fragsize);
 
     if (signal_info.domain != MHA_WAVEFORM)

@@ -1,5 +1,5 @@
 %%% This file is part of the Open HörTech Master Hearing Aid (openMHA)
-%%% Copyright © 2019 HörTech gGmbH
+%%% Copyright © 2019 2020 HörTech gGmbH
 %%%
 %%% openMHA is free software: you can redistribute it and/or modify
 %%% it under the terms of the GNU Affero General Public License as published by
@@ -65,8 +65,8 @@
 \fancyhead[RO]{\fancyplain{}{\bfseries\thepage}}
 \fancyfoot[LE]{\fancyplain{}{}}
 \fancyfoot[CE]{\fancyplain{}{}}
-\fancyfoot[RE]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019 H\"orTech gGmbH, Oldenburg }}
-\fancyfoot[LO]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019 H\"orTech gGmbH, Oldenburg }}
+\fancyfoot[RE]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019-2020 H\"orTech gGmbH, Oldenburg }}
+\fancyfoot[LO]{\fancyplain{}{\bfseries\scriptsize \copyright{} 2019-2020 H\"orTech gGmbH, Oldenburg }}
 \fancyfoot[CO]{\fancyplain{}{}}
 \fancyfoot[RO]{\fancyplain{}{}}
 
@@ -167,14 +167,6 @@ commentstyle=\color{orange},
 
 
 \begin{comment}
-windows --interactive mode?
-
-\end{comment}
-
-
-
-
-\begin{comment}
 \section{Introduction - What is openMHA?}
 
 The large incidence rate of hearing loss (about 13\% of the US population), its high economic costs and the limitations of technical rehabilitative solutions call for an effort towards improving the rehabilitation of hearing impairment. The major aim of the envisaged project is therefore to facilitate research and development towards new technical solutions that improve rehabilitative devices. To achieve this, a large group of researchers will be provided with the means to efficiently develop and evaluate, in collaborative multi-center environments, novel signal processing schemes, individualized fitting procedures, technical solutions and services for hearing devices such as hearing aids and assistive listening devices. This approach leads to more integrated, sustainable and focused research towards improving hearing devices in general. [kopiert von Website, weglassen?, anpassen?] \\
@@ -197,7 +189,7 @@ The large incidence rate of hearing loss (about 13\% of the US population), its 
 \begin{itemize}
 \item \large{{Operating System}}
   \begin{itemize}
-  \item \textcolor{orange}{\textbf{Linux:}} Ubuntu 18.04, 64 bits
+  \item \textcolor{orange}{\textbf{Linux:}} Ubuntu 18.04 or 20.04, 64 bits
   \item \textcolor{orange}{\textbf{Windows:}} Windows 10, 64 bits
   \item \textcolor{orange}{\textbf{macOS:}} High Sierra or later
   \end{itemize}
@@ -215,15 +207,13 @@ The large incidence rate of hearing loss (about 13\% of the US population), its 
           https://www.gnu.org/software/octave/download.html}}
     \end{itemize}
   \item \large{{Matlab:}} \\
-    \footnotesize{\url{https://de.mathworks.com/downloads/}}
+    \footnotesize{\url{https://www.mathworks.com/downloads/}}
   \end{itemize}
 \item \large{{JACK Audio Connection Kit}}
   \begin{itemize}
-  \item \textcolor{orange}{\textbf{Linux}} \\
+  \item \textcolor{orange}{\textbf{Linux:}} \\
     $\rightarrow$ {\ttfamily sudo apt install jackd2 qjackctl}
-  \item \textcolor{orange}{\textbf{Windows}} \\
-    \footnotesize{\url{http://jackaudio.org/downloads/}}
-  \item \textcolor{orange}{\textbf{\large{macOS}}} \\
+  \item \textcolor{orange}{\textbf{Windows, macOS:}} \\
     \footnotesize{\url{http://jackaudio.org/downloads/}}
   \end{itemize}
 \end{itemize}
@@ -242,9 +232,21 @@ The large incidence rate of hearing loss (about 13\% of the US population), its 
 
 This guide was released with openMHA version \MHAversion.
 If you have already installed openMHA on your system, make
-sure that you are using the latest version by repeating the installation
-as described in
-\url{https://github.com/HoerTech-gGmbH/openMHA/blob/master/INSTALLATION.md}.
+sure that you are using the latest version. \\
+\begin{itemize}
+\item \textcolor{orange}{\textbf{Windows, macOS}} \\
+  Repeat the installation process using the latest \textbf{Windows installer}
+  or the latest \textbf{macOS installer} respectively.
+  The installation instructions can be found at
+  \url{https://github.com/HoerTech-gGmbH/openMHA/blob/master/INSTALLATION.md}
+\item \textcolor{orange}{\textbf{Linux}} \\
+  In Linux, all installed openMHA packages need to be updated.
+  For updating openMHA when a new release is available, execute: \\ 
+{\ttfamily sudo apt-get update} \\
+{\ttfamily sudo apt-get install openmha} \\
+This will upgrade all installed openmha packages to their latest version.
+\end{itemize}
+
 
 \subsection{System-Specific Settings}
 
@@ -265,7 +267,7 @@ as described in
   $\rightarrow$ {\ttfamily javaclasspath} \\
   If this responds with "STATIC JAVA PATH ... DYNAMIC JAVA PATH ..." then
   Java is set up correctly (even if there is also a warning).
-  But if Octave/Matlab responds with an error then you need to install a
+  \\ If Octave/Matlab responds with an error then you need to install a
   suitable Java Runtime Environment on your computer, restart Octave/Matlab
   and test again. Refer to Octave/Matlab documentation for details.
 \end{itemize}
@@ -288,13 +290,13 @@ $\rightarrow$ {{\ttfamily \textbf{mha \texttt{-{}-}interactive}}
 Open your \textbf{terminal} by: \\ \\
 $\rightarrow$ "\textbf{Windows + R}" \\
     $\rightarrow$ type in {{\ttfamily \textbf{cmd}}} and press \textbf{Enter} \\
-    Type now {{\ttfamily \textbf{mha \texttt{-{}-}interactive}}  into the terminal window. 
+    Now type {{\ttfamily \textbf{mha \texttt{-{}-}interactive}}  into the terminal window. 
    
 
 
 \subsubsection*{\textcolor{orange}{macOS}}
 
-Open your \textbf{terminal} by pressing \textbf{Command + Space} in order to open spotlight search, type "terminal" and press enter. Type: \\ \\
+Open your \textbf{terminal} by pressing \textbf{Command + Space} in order to open spotlight search, type "terminal" and press \textbf{Enter}. Type: \\ \\
 $\rightarrow$ {{\ttfamily \textbf{mha \texttt{-{}-}interactive}} \\ \\ in your \textbf{terminal}.\\
 
 
@@ -323,7 +325,10 @@ names to include correct absolute or relative paths.
 
 \vspace{1cm}
 
-
+In order to terminate the openMHA started in this chapter,
+you can type \\
+$\rightarrow$ {\ttfamily \textbf{cmd=quit}} \\
+followed by \textbf{Enter} into the terminal.
 
 
 
@@ -536,53 +541,21 @@ To do this, start openMHA in the same directory as before:
 
 \end{enumerate}
 
-\subsubsection{Adjusting the fragment size}%
-\index{fragment size}%
-\index{double buffering}%
-
-If the required fragment size is not supported by the audio hardware,
-double buffering can be used in the \mha{} framework. Decoupling of the JACK
-fragment size and the \mha{} fragment size can be reached by inserting the
-double buffer plugin \textit{db} between the framework and the
-algorithm. This is demonstrated in gain\_live\_double.cfg.
-
 \textcolor{orange}{\textbf{You have now managed to start some simple
     configurations for a static audio file as well as a live input using Jack.
     In the next session Matlab or Octave will be used as user interface for openMHA.}}
 
 \newpage
 
-\begin{comment}
-\section{The remote connection - openMHA}
-\label{sec_remote}
-
-\mha{} is now running and can be reached by default using port 33337. In order to communicate with \mha{} you can use the network client \textbf{\textit{Netcat.}} Use a \textbf{second terminal windows} and type: \\
-$\rightarrow$ \textbf{{\ttfamily nc localhost 33337}} 
-
-For more details look into "openMHA\_application\_manual.pdf" (p. 4-7)\footnote{\label{foot:1}\url{https://github.com/HoerTech-gGmbH/openMHA/blob/master/openMHA_application_manual.pdf}}. \\
-
-    Open a second terminal  \\
-    Connect to openMHA using Netcat by typing: {\ttfamily nc localhost 33337}
-
-\end{comment}
-
-
 
 \section{Control Frequency Shifter using Octave/Matlab GUI}
 \label{sec:freqshifter}
 
-%During the openMHA installation process several Matlab functions were copied to the corresponding installation directory. In  the standard case you can find these Matlab function in \textbf{Program Files\textbackslash openMHA\textbackslash mfiles}.
-%For this section you will make use of several openMHA Matlab function which you can find in \textit{/usr/lib/openmha/mfiles}. \textbf{Copy} these files to a non-protected directory, e.g. \textit{/home/YourUserName/Documents/}.
-
-
 
 \begin{enumerate}
-%\item Copy the \textbf{mfiles} folder into a non protected directory, e.g.
-%\textbf{\textbackslash Users\textbackslash YourUserName\textbackslash
-%Documents}
 \item \textbf{End} all running \textbf{mha processes} 
 \item \textbf{Open Matlab or Octave} 
-\item \textcolor{orange}{\textbf{Linux and Windows:}} Set LD\_LIBRARY\_PATH to empty by typing \\ {\ttfamily
+\item \textcolor{orange}{\textbf{Linux:}} Set LD\_LIBRARY\_PATH to empty by typing \\ {\ttfamily
   $\rightarrow$ setenv(\textquotesingle
   LD\_LIBRARY\_PATH\textquotesingle,\textquotesingle\textquotesingle)} \\
   into the \textbf{Command Window} \\
@@ -646,7 +619,8 @@ into the \textbf{Command Window} \\
   processed microphone sound.
   You can not only move the sliders using the mouse cursor or up- and
   down-arrow keys, but also replace the numbers directly
-  by typing new numbers and pressing enter in the text fields of the GUI.
+  by typing new numbers and pressing \textbf{Enter}
+  in the text fields of the GUI.
   These settings control a frequency shifter, which band is shifted and how
   much.
 \end{enumerate}
@@ -655,12 +629,10 @@ into the \textbf{Command Window} \\
 
 \section{Control Dynamic Compression using Octave/Matlab GUI}
 
-%As in section \ref{sec:freqshifter}: During the openMHA installation process several Matlab functions were copied to the corresponding installation directory. In  the standard case you can find these Matlab function in \textbf{Program Files\textbackslash openMHA\textbackslash mfiles}.
-
 \begin{enumerate}
 \item \textbf{End} all running \textbf{mha processes} (You can type \textbf{killall mha} in the terminal to any running mha processes [Linux/macOS only])
 \item \textbf{Open Matlab or Octave}
-\item \textcolor{orange}{\textbf{Linux and Windows:}} Set LD\_LIBRARY\_PATH to empty by typing \\ {\ttfamily
+\item \textcolor{orange}{\textbf{Linux:}} Set LD\_LIBRARY\_PATH to empty by typing \\ {\ttfamily
   $\rightarrow$ setenv(\textquotesingle
   LD\_LIBRARY\_PATH\textquotesingle,\textquotesingle\textquotesingle)} \\
   into the \textbf{Command Window} \\
@@ -694,41 +666,63 @@ into the \textbf{Command Window} \\
 \item In order to start openMHA type {\ttfamily openmha = mha\_start;} 
 \item Read in configuration into mha by \\ {\ttfamily mha\_query(openmha,\textquotesingle{}\textquotesingle{},\textquotesingle{}read:dynamiccompression\_live.cfg\textquotesingle{});}
 \item \textbf{Start JACK Server} using \textbf{JACK Control}\\ (Setting: Sample Rate = 44100, Frames/Period = 64)
+
 \item In order to start the mha process type {\ttfamily mha\_set(openmha,\textquotesingle{}cmd\textquotesingle{},\textquotesingle{}start\textquotesingle{});}
-\item In order to read out the current gaintable and relevant paramters type the following: \\
+
+
+\item The current gaintable {\ttfamily gtdata} and relevant parameters such as {\ttfamily gtmin} and {\ttfamily gtstep} (more information on these can be found under {\url{%
+          {http://www.openmha.org/docs/openMHA_plugins.pdf#subsection.2.1}}}
+\large) can be read out by: \\
+
 {\ttfamily gaintable = mha\_get(openmha,\textquotesingle{}mha.overlapadd.mhachain.dc.gtdata\textquotesingle{});}\\
 {\ttfamily gtmin = mha\_get(openmha,\textquotesingle{}mha.overlapadd.mhachain.dc.gtmin\textquotesingle{});}\\
 {\ttfamily gtstep = mha\_get(openmha,\textquotesingle{}mha.overlapadd.mhachain.dc.gtstep\textquotesingle{});}
+
+
+
+The variables {\ttfamily gtmin} (minimum input level) and {\ttfamily gtstep} (input level increment) expect vectors, but we have assigned scalar values to {\ttfamily gtmin} and {\ttfamily gtstep} previously. Scalar values will be interpreted as vectors of length 1 by the MHA when assigned to vector variables. The dc plugin allows vectors of length 1 for variables {\ttfamily gtmin} and {\ttfamily gtstep}, in this case the same value applies to every channel/band. It is also possible to have different {\ttfamily gtmin}/{\ttfamily gtstep} values for each channel/band by assigning a vector of values to these variables where the number of elements in the vector is equal to the number of channels/bands.
+
+\item You can design your own gaintable in Matlab, e.g. noise gate, compressive region, output limit \\
+  {\ttfamily gaintable = repmat([-50,30:-2:0,-4:-4:-32],18,1);} \\
+  with \\
+  {\ttfamily gtmin = zeros(1,size(gaintable,1));} \\
+  and \\
+  {\ttfamily gtstep = 4*ones(1,size(gaintable,1));} 
+  
+
+This would result in an input/output characteristic which is the same for every channel/band.
+
 \item Plot the I/O characteristics \\
-{\ttfamily level\_in = ((1:size(gaintable,2))-1) * gtstep + gtmin;}\\
+{\ttfamily level\_in = ((1:size(gaintable,2))-1) .* gtstep\textquotesingle{}+gtmin\textquotesingle{};}\\
 {\ttfamily level\_out = level\_in + gaintable;}
-\item In order to plot input and output level, type {\ttfamily figure, plot(level\_in,level\_out)}
-\item You can design your own gaintable in Matlab by using 
+
+\item In order to apply the gaintable type \\
+{\ttfamily mha\_set(openmha,\textquotesingle{}mha.overlapadd.mhachain.dc.gtdata\textquotesingle{},gaintable);}
+\item In order to plot input and output level in Matlab, type \\ {\ttfamily figure, plot(level\_in\textquotesingle{},level\_out\textquotesingle{})}
+
+\textcolor{orange}{Note: You can also use the mfile tool \textbf{dc\_plot\_io.m}}. For this type: 
+
+{\ttfamily figure, dc\_plot\_io(gtmin, gtstep,gaintable, level\_in);}
+
+
+\item You can design more gaintables in Matlab, e.g. by using 
   {\ttfamily gaintable\_new = [...]}
   \begin{itemize}
   \item e.g. Squash all input levels to the same output level, infinite compression:
     \\ \texttt{gaintable\_new = 65.*ones(18,1) - level\_in;}
-  \item e.g. noise gate, compressive region, output limit: \\
-    \texttt{gaintable\_new =repmat([-50,30:-2:0,-4:-4:-32],18,1);}
   \item e.g. compress high frequency band only: ...
   \end{itemize}
 \item In order to apply the new gaintable type \\
 {\ttfamily mha\_set(openmha,\textquotesingle{}mha.overlapadd.mhachain.dc.gtdata\textquotesingle{},gaintable\_new);}
+\item The fitting GUI can be started by typing {\ttfamily mhacontrol(openmha)}
 \item You can stop openMHA using {\ttfamily mha\_set(openmha,\textquotesingle{}cmd\textquotesingle{},\textquotesingle{}quit\textquotesingle{})}
-\item More complex gaintable example would be \\
-{\ttfamily openmha = mha\_start([],\{\},\{\textquotesingle{}?read:dynamiccompression\_live.cfg\textquotesingle{}\})}\\
-{\ttfamily mha\_set(openmha,\textquotesingle{}cmd\textquotesingle{},\textquotesingle{}start\textquotesingle{})}
-\item Start fitting GUI by typing {\ttfamily mhacontrol(openmha)}
 
 
 
 \end{enumerate}
 \newpage
-\section{Dealing with AC Variables}
+\section{Using AC Variables}
 \label{sec:ac_variables}
-
-%During the openMHA installation process several Matlab functions were copied to the corresponding installation directory. In  the standard case you can find these Matlab function in \textbf{Program Files\textbackslash openMHA\textbackslash mfiles}.
-%For this section you will make use of several openMHA Matlab function which you can find in \textit{/usr/lib/openmha/mfiles}. \textbf{Copy} these files to a non-protected directory, e.g. \textit{/home/YourUserName/Documents/}.
 
 The objective of this section is to learn about dealing with AC-Variables in combination with Matlab. \\ \\
 
@@ -814,10 +808,111 @@ Within the configuration file this is denoted by: \\
 \caption{Matlab: Coherence plotted as a function of frequency}
 \end{figure}
 
-The purpose of this example is to show that the plugin ac\_proc can be used to apply common signal processing operationd such as a gain to an originally non-audio signal such as an AC variable data stream.
+The purpose of this example is to show that the plugin ac\_proc can be used to apply common signal processing operations such as a gain to an originally non-audio signal such as an AC variable data stream.
+\end{enumerate}
 
+
+
+
+
+
+
+\newpage
+
+\section{Writing your own Configuration Script}
+\label{sec:own_config_script}
+
+This section will offer a guide on how to write your own openMHA script. For doing so some basic parameters need to be set. In this example we want to write an example script for using the \textit {sine} plugin. \\
+
+
+
+First it is necessary to fix the following parameters:
+
+\begin{enumerate}
+\item \textbf{Number of input channels} ({\ttfamily nchannels\_in})
+\item \textbf{Fragment size} ({\ttfamily fragsize})
+\item \textbf{Sampling rate in Hz} ({\ttfamily srate}) 
+
+For an input file with two channels and a sampling rate of 44.1 kHz. This could for example look like: \\
+
+\lstinputlisting[firstline=1,lastline=6,numbers=none]{./example_script.cfg}
+
+
+
+\item \textbf{Plugin(s):} Next we need to tell the MHA which plugin(s) to load with the {\ttfamily mhalib} variable. As mentioned in the beginning of the section the sine plugin will be used as an example: \\
+
+\lstinputlisting[firstline=7,lastline=8,numbers=none]{./example_script.cfg}
+
+\item \textbf{Configuration variables:} Each plugin has \textit{configuration variables} which can be adjusted accordingly. For each plugin the configuration variables are listed in the \textit{plugin manual} 
+\\(\footnotesize{\url{%
+          {http://www.openmha.org/docs/openMHA_plugins.pdf#subsection.16.3}}}
+\normalsize for sine plugin). These variables can be adjusted according to your requirements, such as the frequency of the sine wave ({\ttfamily f}), the RMS level ({\ttfamily lev}) or if the input signal should be added to the sine wave or replaced completely ({\ttfamily mode}). An extract from the \textit{plugin manual} is shown below in Figure \ref{fig:config_variables_sine}. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.22]{config_variables_sine.png}
+\caption{Extract from \textit{Plugin Manual}: Configuration variables of the
+         \texttt{sine} plugin}
+\label{fig:config_variables_sine}
+\end{figure}
+
+Although the plugin is used by {\ttfamily mhalib = sine}, the variables of the plugin are changed by setting {\ttfamily mha.<variable\_name>~=~value}. This could for example look like:
+
+\lstinputlisting[firstline=9,lastline=17,numbers=none]{./example_script.cfg}
+
+Here the frequency was adjusted to 440 Hz and the RMS level of the sine tone was changed to 100 dB. The operating mode was to set to {\ttfamily mix}, such that the input is mixed with the sine signal (instead of being replaced). The variable {\ttfamily channels} was adjusted to [0]. This means that the sine plugin is only operating on the first channel. In order to operate on both channels {\ttfamily mha.channels~=~[0 1]} can be used.  
+           
+
+\item \textbf{Audio Back-End:} openMHA supports different audio back-ends, such as sound drivers, JACK audio servers, sound files or networks. This can be adjusted by choosing the so called IO plugin library ({\ttfamily iolib}). : \\ \\For static audio files: 
+{e.g. \ttfamily iolib = MHAIOFile}\\
+For live JACK signals: 
+{\ttfamily iolib = MHAIOJack}\\
+In this case we want to work with a static audio file such that we need to choose: \\
+
+\lstinputlisting[firstline=19,lastline=20,numbers=none]{./example_script.cfg}
+
+\item \textbf{Input} ({\ttfamily io.in}) \\ \\For static audio files: 
+{\ttfamily io.in = name\_of\_file.wav}\\
+For live JACK signals: 
+{\ttfamily io.con\_in = [system:capture\_1 system:capture\_2]} \\
+(for two input channels)
+
+\lstinputlisting[firstline=21,lastline=24,numbers=none]{./example_script.cfg}
+
+\textcolor{red}{\textbf{Note: In this case the input file needs to be in the same directory as the .cfg file itself. If this is not the case the absolute or relative (to the .cfg file) path can be used, e.g.}}
+
+\begin{itemize}
+\item {\ttfamily ./../Folder/1speaker\_diffNoise\_2ch.wav} (\textit{relative path})
+\item {\ttfamily /home/UserName/Folder/1speaker\_diffNoise\_2ch.wav} (\textit{absolute path})
+\end{itemize} 
+
+\newpage
+
+\item \textbf{Output} ({\ttfamily io.out}) \\ \\For static audio files: 
+{e.g. \ttfamily io.out = name\_of\_file\_out.wav}\\
+For live JACK signals: 
+{\ttfamily io.con\_out = [system:playback\_1 system:playback\_2]}\\
+(for two output channels)
+
+\lstinputlisting[firstline=25,lastline=26,numbers=none]{./example_script.cfg}
 
 \end{enumerate}
+
+\textit{How to run your script:}
+
+\begin{enumerate}
+\item Start openMHA in the \textbf{same directory} as your .cfg file
+\item $\rightarrow${\ttfamily ?read:your\_script.cfg}
+\item Start the openMHA signal processing by:
+
+$\rightarrow$ {\ttfamily cmd=start}
+
+\item In order to exit openMHA type:
+
+$\rightarrow$ {\ttfamily cmd=quit} 
+\\
+\end{enumerate}
+
 \end{document}
 
 %%% Local Variables: 

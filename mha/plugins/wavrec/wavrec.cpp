@@ -1,5 +1,5 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
-// Copyright © 2010 2011 2012 2013 2014 2015 2016 2018 2019 HörTech gGmbH
+// Copyright © 2010 2011 2012 2013 2014 2015 2016 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -148,7 +148,7 @@ wavwriter_t::wavwriter_t(bool active,const mhaconfig_t& cf,unsigned int fifosize
       data(new float[fifosize])
 {
     if(minw_ >= fifosize )
-        throw MHA_Error(__FILE__,__LINE__,"minwrite must be less then fifosize (minwrite: %d, fifosize: %d)",minw_,fifosize);
+        throw MHA_Error(__FILE__,__LINE__,"minwrite must be less then fifosize (minwrite: %u, fifosize: %u)",minw_,fifosize);
     if( (cf_.channels == 0) || (cf_.srate==0) )
         act_ = false;
     if( act_ ){
@@ -204,7 +204,14 @@ MHAPLUGIN_CALLBACKS(wavrec,wavrec_t,wave,wave)
 MHAPLUGIN_DOCUMENTATION\
 (wavrec,
  "data-export disk-files",
- "")
+ "Wave file recorder plugin. This plugin writes the current audio signal to a wave file in a thread-safe manner."
+ " A new wave file is opened every time the record variable is set to yes. The file is"
+ " closed on any of \"cmd=release\", \"cmd=quit\" or \"record=no\". Note that \"cmd=stop\" does not"
+ " close the wave file. After the the close command is given, it can take an unspecified, but usually small amount"
+ " amount of time until the file is actually closed and ready for further processing. \n"
+ " The name (and path) of the output file is chosen by the prefix configuration variable. By default the current"
+ " date and time are appended to the file name, this behaviour can be controlled by the \"use\\_date\" variable.\n"
+ "The \"fifolen\" and \"minwrite\" variables control the behaviour of the fifo buffer and should usually remain unchanged.")
 
 /*
  * Local Variables:

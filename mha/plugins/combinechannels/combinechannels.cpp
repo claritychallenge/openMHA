@@ -1,6 +1,6 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
 // Copyright © 2005 2006 2007 2008 2009 2010 2012 2013 2014 2015 HörTech gGmbH
-// Copyright © 2016 2017 2018 HörTech gGmbH
+// Copyright © 2016 2017 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -44,11 +44,12 @@ combc_t::combc_t(algo_comm_t ac,mhaconfig_t cfg_input,mhaconfig_t cfg_output,std
       element_gain_name_(element_gain_name)
 {
     if( cfg_output.channels * nbands != cfg_input.channels )
-        throw MHA_Error(__FILE__,__LINE__,"Invalid channel settings:\n%d bands, %d output channels, %d input channels",nbands,cfg_output.channels,cfg_input.channels);
+        throw MHA_Error(__FILE__,__LINE__,"Invalid channel settings:\n%u bands, %u output channels, %u input channels",
+                        nbands,cfg_output.channels,cfg_input.channels);
     if( channel_gains_.size() ){
         if( channel_gains_.size() != cfg_input.channels )
             throw MHA_Error(__FILE__,__LINE__,
-                            "Gain vector contains %d entries, expected empty vector or %d entries.",
+                            "Gain vector contains %zu entries, expected empty vector or %u entries.",
                             channel_gains_.size(),cfg_input.channels);
     }else{
         channel_gains_ = std::vector<mha_real_t>(cfg_input.channels,1.0f);
@@ -166,12 +167,15 @@ MHAPLUGIN_PROC_CALLBACK(combinechannels,combc_if_t,spec,spec)
 MHAPLUGIN_DOCUMENTATION\
 (combinechannels,
  "data-flow audio-channels filterbank",
- "Several filter channels can be combined into one or more output"
- " channels by summing the input channels. This plugin is intended as a"
+ "Several filterbank bands can be combined into one or more output"
+ " channels by summing-up the input channels. This plugin is intended as a"
  " filter resynthesis of linear-phase filter banks.\n\nThe input signal"
- " is expected to have a non-interleaved channel order, i.e., first all"
- " bands of first output channel, then all bands of second channel, etc.\n\n"
- )
+ " is by default expected to have a non-interleaved channel order, i.e., first all"
+ " bands of first output channel, then all bands of second channel, etc. This behaviour"
+ " can be controlled by the \"interleaved\" configuration variable.\n"
+ "It is also possible to apply independent channel-wise and element-wise gains from AC variables"
+ " to the signal before summation. This can be done by setting the configuration variables"
+ " \"element\\_gain\\_name\" and \"channel\\_gain\\_name\" variables.")
 
 // Local Variables:
 // compile-command: "make"

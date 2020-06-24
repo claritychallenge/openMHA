@@ -1,6 +1,6 @@
 // This file is part of the HörTech Open Master Hearing Aid (openMHA)
 // Copyright © 2003 2004 2005 2006 2007 2008 2009 2010 2011 HörTech gGmbH
-// Copyright © 2012 2013 2014 2016 2017 2018 2019 HörTech gGmbH
+// Copyright © 2012 2013 2014 2016 2017 2018 2019 2020 HörTech gGmbH
 //
 // openMHA is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <ctype.h>
+#include <algorithm>
 #include "mha_parser.hh"
 #include "mha_error.hh"
 #include "mha_defs.h"
@@ -294,56 +295,78 @@ MHAParser::base_t::~base_t(  )
 
 std::string MHAParser::base_t::query_readfile( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?read is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 std::string MHAParser::base_t::query_savefile( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?save is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_savefile_compact( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?saveshort is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_savemons( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?savemons is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_dump( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ? is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_entries( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?entries is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_perm( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?perm is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_range( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?range is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_type( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?type is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_val( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?val is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_listids( const std::string & s )
 {
-    throw MHA_Error( __FILE__, __LINE__, "" );
+    throw MHA_Error( __FILE__, __LINE__,
+                     "Query ?listid is not implemented"
+                     " for parser objects of type %s", typeid(*this).name());
 }
 
 std::string MHAParser::base_t::query_help( const std::string & s )
@@ -567,7 +590,9 @@ void MHAParser::parser_t::insert_item( const std::string & n, MHAParser::base_t 
 {
     for( unsigned int k=0;k<n.size();k++)
         if( isspace(n.c_str()[k] ) )
-            throw MHA_Error(__FILE__,__LINE__,"A MHA variable name may not contain whitespace characters (\"%s\",%d)",n.c_str(),k);
+            throw MHA_Error(__FILE__,__LINE__,
+                            "An MHA variable name may not contain whitespace"
+                            " characters (\"%s\",%u)",n.c_str(),k);
     if( e == this )
         throw MHA_Error( __FILE__, __LINE__, "Not able to insert entry into itself." );
     for( entry_map_t::iterator i = entries.begin(  ); i != entries.end(  ); ++i )
@@ -745,7 +770,7 @@ std::string MHAParser::parser_t::query_readfile( const std::string & fname )
         fh.close(  );
         last_errormsg = e.get_msg(  );
         throw MHA_Error( __FILE__, __LINE__,
-                         "%s\n(while parsing \"%s\" line %d)", last_errormsg.c_str(  ), srcfile.c_str(  ), srcline );
+                         "%s\n(while parsing \"%s\" line %u)", last_errormsg.c_str(  ), srcfile.c_str(  ), srcline );
     }
 }
 
@@ -917,6 +942,11 @@ std::string MHAParser::all_dump( base_t * p, const std::string & pref )
 std::string MHAParser::parser_t::query_dump( const std::string & s )
 {
     return all_dump( this, "" );
+}
+
+bool MHAParser::parser_t::has_entry(const std::string& s) {
+    return std::find_if(entries.begin(),entries.end(),
+                        [&s](const entry_t & i){return i.name==s;})!=entries.end();
 }
 
 std::string MHAParser::parser_t::op_subparse( expression_t & x )
@@ -1239,7 +1269,7 @@ template<class arg_t> void MHAParser::StrCnv::str2val( const std::string & s, st
     }else if (nbr == -1){
         v = val; // empty string without brackets creates empty vector
     }else{
-        throw MHA_Error(__FILE__,__LINE__,"Invalid number of brackets (\"%s\", %d)",s.c_str(),nbr);
+        throw MHA_Error(__FILE__,__LINE__,"Invalid brackets (\"%s\", %d)",s.c_str(),nbr);
     }
 }
 
@@ -1248,9 +1278,6 @@ template<class arg_t> void MHAParser::StrCnv::str2val( const std::string & s, st
     switch( MHAParser::StrCnv::num_brackets( s ) ){
     case -1 : // empty string, error
         throw MHA_Error(__FILE__,__LINE__,"Empty string \"%s\"",s.c_str());
-        break;
-    case 1 : // only one bracket, error
-        throw MHA_Error(__FILE__,__LINE__,"Bracket is missing (\"%s\")",s.c_str());
         break;
     case 0 : // no brackets, scalar
     case 2 : // both brackets, vector
@@ -1288,14 +1315,14 @@ template<class arg_t> void MHAParser::StrCnv::str2val( const std::string & s, st
             unsigned int dim1 = val[0].size(  );
             for( unsigned int k = 1; k < val.size(  ); k++ ) {
                 if( val[k].size(  ) != dim1 )
-                    throw MHA_Error( __FILE__, __LINE__, "Row %d has %d entries, expected %d.", k, val[k].size(  ), dim1 );
+                    throw MHA_Error( __FILE__, __LINE__, "Row %u has %zu entries, expected %u.", k, val[k].size(  ), dim1 );
             }
         }
         v = val;
         break;
     }
     default :
-        throw MHA_Error(__FILE__,__LINE__,"Internal bug.");
+        throw MHA_Error(__FILE__,__LINE__,"Invalid brackets: %s",s.c_str());
     }
 }
 
@@ -1381,7 +1408,8 @@ static std::string parse_1_complex( const std::string & s, mha_complex_t & v )
     rest = rest.substr( rest.find_first_not_of( " \t" ) );
     if( rest[0] != 'i' )
         throw MHA_ErrorMsg( "missing 'i' after imaginary part" );
-    rest = rest.substr( rest.find_first_not_of( " \t", 1 ) );
+    if (rest.size() > 1)
+        rest = rest.substr( rest.find_first_not_of( " \t", 1 ) );
     if( rest[0] != ')' )
         throw MHA_ErrorMsg( "closing ')' missing in complex value" );
     return rest.substr( 1 );
@@ -1412,29 +1440,36 @@ void MHAParser::StrCnv::str2val( const std::string & s, bool & v )
 }
 
 /** 
-    \brief Return number of brackets at beginning and end of string.
-  
+    \brief Return number of brackets according to layer depth (vector:2, matrix:4, etc)
     \param s    String
-    \return Number of brackets, or -1 for empty string
+    \return Number of brackets, or -1 for empty string, or -2 for invalid brackets
 */
 int MHAParser::StrCnv::num_brackets(const std::string& s)
 {
+    int num_b{0};
     if( s.size() == 0 )
-        return -1;
-    int n = (s[0]=='[') + (s[s.size()-1]==']');
-    if( n == 2 ){
-        std::string cs(s);
-        cs.erase( 0, 1 );
-        if( cs.size() )
-            cs.erase( cs.size()-1, 1 );
-        MHAParser::trim(cs);
-        if( cs.size() && (cs[cs.size()-1]==';') )
-            cs.erase( cs.size()-1, 1 );
-        MHAParser::trim(cs);
-        if( cs.size() )
-            n += (cs[0]=='[') + (cs[cs.size()-1]==']');
+        num_b = -1;
+    else{
+        int num_open{0};
+        int num_close{0};
+        int max_open{0};
+        for (unsigned idx=0; idx<s.size(); ++idx){
+            num_open += s[idx] == '[';
+            num_close += s[idx] == ']';
+            if (num_close > num_open)
+                return -2;
+            // the idea is not to count the brackets per se but to
+            // get the number of bracket layers
+            // for example [foo] is a vector, [[bar]] is a matrix but
+            // [[foo][bar]] is still a matrix
+            max_open = std::max((num_open - num_close),max_open);
+        }
+        if (num_open != num_close)
+            num_b = -2;
+        else
+            num_b = max_open * 2;
     }
-    return n;
+    return num_b;
 }
 
 int MHAParser::StrCnv::bracket_balance(const std::string& s)
@@ -1480,7 +1515,7 @@ void MHAParser::keyword_list_t::set_value( const std::string & s )
 void MHAParser::keyword_list_t::set_index( unsigned int idx )
 {
     if( idx >= entries.size(  ) )
-        throw MHA_Error( __FILE__, __LINE__, "The index %d is out of range (%d).", idx, entries.size(  ) );
+        throw MHA_Error( __FILE__, __LINE__, "The index %u is out of range (%zu).", idx, entries.size(  ) );
     index = idx;
 }
 
@@ -2376,7 +2411,7 @@ void MHAParser::range_var_t::validate( const std::vector < int >&v )
             std::string vl = StrCnv::val2str( v );
             std::string vl1 = StrCnv::val2str( v[k] );
             throw MHA_Error( __FILE__, __LINE__,
-                             "The %d. entry of %s (value: %s) is not in the range %s.",
+                             "The entry at index %u of %s (value: %s) is not in the range %s.",
                              k + 1, vl.c_str(  ), vl1.c_str(  ), rg.c_str(  ) );
         }
     }
@@ -2411,7 +2446,7 @@ void MHAParser::range_var_t::validate( const std::vector < float >&v )
             std::string vl = StrCnv::val2str( v );
             std::string vl1 = StrCnv::val2str( v[k] );
             throw MHA_Error( __FILE__, __LINE__,
-                             "The %d. entry of %s (value: %s) is not in the range %s.",
+                             "The entry at index %u of %s (value: %s) is not in the range %s.",
                              k + 1, vl.c_str(  ), vl1.c_str(  ), rg.c_str(  ) );
         }
     }
@@ -2427,7 +2462,7 @@ void MHAParser::range_var_t::validate( const std::vector < mha_complex_t > &v )
         }
         catch( MHA_Error & e ) {
             std::string tmp = StrCnv::val2str( v );
-            throw MHA_Error( __FILE__, __LINE__, "%s\n(while scanning %d. entry of %s)", Getmsg( e ), k, tmp.c_str(  ) );
+            throw MHA_Error( __FILE__, __LINE__, "%s\n(while scanning entry at index %u of %s)", Getmsg( e ), k, tmp.c_str(  ) );
         }
     }
 }
@@ -2460,7 +2495,7 @@ void MHAParser::range_var_t::validate(const std::vector<std::vector<int> > &v) {
                 std::string rg = query_range( "" );
                 std::string vl1 = StrCnv::val2str( v[k][k2] );
                 throw MHA_Error( __FILE__, __LINE__,
-                                 "The (%d, %d). entry (value: %s) is not in the range %s.",
+                                 "The entry at index (%u,%u) (value: %s) is not in the range %s.",
                                  k + 1, k2 + 1, vl1.c_str(  ), rg.c_str(  ) );
             }
         }
@@ -2496,7 +2531,7 @@ void MHAParser::range_var_t::validate( const std::vector < std::vector < float >
                 std::string rg = query_range( "" );
                 std::string vl1 = StrCnv::val2str( v[k][k2] );
                 throw MHA_Error( __FILE__, __LINE__,
-                                 "The (%d, %d). entry (value: %s) is not in the range %s.",
+                                 "The entry at index (%u,%u) (value: %s) is not in the range %s.",
                                  k + 1, k2 + 1, vl1.c_str(  ), rg.c_str(  ) );
             }
         }
@@ -2858,9 +2893,6 @@ template<> void MHAParser::StrCnv::str2val<mha_real_t>( const std::string & s, s
         v = val;
         break;
     }
-    case 1 : // only one bracket, error
-        throw MHA_Error(__FILE__,__LINE__,"Bracket is missing (\"%s\")",s.c_str());
-        // no break; needed here, the break would be unreachable.
     case 2 : // both brackets, vector
     {
         std::string fv;
@@ -2888,7 +2920,7 @@ template<> void MHAParser::StrCnv::str2val<mha_real_t>( const std::string & s, s
         break;
     }
     default :
-        throw MHA_Error(__FILE__,__LINE__,"Invalid number of brackets: %s",s.c_str());
+        throw MHA_Error(__FILE__,__LINE__,"Invalid brackets: %s",s.c_str());
     }
 }
 
